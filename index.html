@@ -54,6 +54,20 @@
       #messages > li:nth-child(odd) {
         background: #efefef;
       }
+
+      #chatFinished {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        background: #333;
+        color: #fff;
+        padding: 1rem;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      }
     </style>
   </head>
   <body>
@@ -62,6 +76,9 @@
       <input id="input" autocomplete="off" /><button>Send</button>
       <button id="desconectar">Desconectar</button>
     </form>
+    <div id="chatFinished">
+      <h1>Chat finalizado</h1>
+    </div>
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
@@ -71,6 +88,7 @@
       const form = document.getElementById("form");
       const input = document.getElementById("input");
       const desconectar = document.getElementById("desconectar");
+      const chatFinished = document.getElementById("chatFinished");
       form.addEventListener("submit", (e) => {
         e.preventDefault();
         if (input.value) {
@@ -85,9 +103,11 @@
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
+
       desconectar.addEventListener("click", () => {
         socket.close();
         console.log("Socket cerrado");
+        chatFinished.style.display = "block";
       });
     </script>
   </body>
