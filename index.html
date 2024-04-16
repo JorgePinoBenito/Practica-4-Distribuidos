@@ -75,10 +75,12 @@
     <form id="form" action="">
       <input id="input" autocomplete="off" /><button>Send</button>
       <button id="desconectar">Desconectar</button>
+      <button id="reconectar">Reconectar</button>
     </form>
     <div id="chatFinished">
       <h1>Chat finalizado</h1>
     </div>
+    <div id="deleteBtn" class=""></div>
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
@@ -88,11 +90,14 @@
       const form = document.getElementById("form");
       const input = document.getElementById("input");
       const desconectar = document.getElementById("desconectar");
+      const reconectar = document.getElementById("reconectar");
       const chatFinished = document.getElementById("chatFinished");
+
       form.addEventListener("submit", (e) => {
         e.preventDefault();
         if (input.value) {
-          socket.emit("chat message", input.value);
+          const time = new Date().toLocaleTimeString();
+          socket.emit("chat message", `${time}: ${input.value}`);
           input.value = "";
         }
       });
@@ -101,13 +106,26 @@
         const item = document.createElement("li");
         item.textContent = msg;
         messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "X"; // Texto del botón de borrar
+        deleteBtn.addEventListener("click", () => {
+          messages.removeChild(item); // Borrar el mensaje al hacer clic en el botón de borrar
+        });
+
+        // Añadir el texto del mensaje y el botón de borrar al elemento de lista
+        item.appendChild(deleteBtn); // Añadir el botón de borrar al elemento del mensaje
+        messages.appendChild(item);
       });
 
       desconectar.addEventListener("click", () => {
         socket.close();
         console.log("Socket cerrado");
         chatFinished.style.display = "block";
+      });
+      reconectar.addEventListener("click", () => {
+        socket.open();
+        console.log("Socket reabierto");
+        chatFinished.style.display = "none";
       });
     </script>
   </body>
